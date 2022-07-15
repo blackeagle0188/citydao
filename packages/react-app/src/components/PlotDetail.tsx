@@ -14,6 +14,7 @@ import Gravel from "../assets/images/gravel.png";
 import Sage from "../assets/images/sage.png";
 import Rock from "../assets/images/rock.png";
 import Arrow from "../assets/images/arrow.png";
+import { PLOT_IMAGES_BASE_URI } from "../constants";
 
 interface Props {
   plot: Plot;
@@ -61,7 +62,7 @@ export default function PlotDetail({ plot, contracts, injectedProvider, mainnetP
               </div>
             </motion.div>
             <motion.img
-              src={plotMetadata?.image ?? LAND_IMG}
+              src={activePlot ? `${PLOT_IMAGES_BASE_URI}/${activePlot.id}.png` : LAND_IMG}
               alt={plot?.id.toString()}
               initial={{ x: -300, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
@@ -80,7 +81,7 @@ export default function PlotDetail({ plot, contracts, injectedProvider, mainnetP
                 <div className="flex flex-row items-center">
                   <img src={Icon1} className="mr-4" />
                   <span className="text-right secondary-font text-lg text-white text-opacity-75 tracking-wider">
-                    {activePlot?.properties.District}
+                    {activePlot?.properties.district}
                   </span>
                 </div>
               </div>
@@ -102,7 +103,9 @@ export default function PlotDetail({ plot, contracts, injectedProvider, mainnetP
                       </div>
                       <span className="secondary-font text-xl text-white text-opacity-75 tracking-wider">Gravel</span>
                     </div>
-                    <span className="primary-font text-lg tracking-wider">{activePlot?.properties.HISTO_0 ?? 0}%</span>
+                    <span className="primary-font text-lg tracking-wider">
+                      {activePlot?.properties.other_pct ?? 0}%
+                    </span>
                   </div>
                   <div className="flex flex-row items-center w-full justify-between">
                     <div className="flex flex-row items-center">
@@ -111,7 +114,7 @@ export default function PlotDetail({ plot, contracts, injectedProvider, mainnetP
                       </div>
                       <span className="secondary-font text-xl text-white text-opacity-75 tracking-wider">Rock</span>
                     </div>
-                    <span className="primary-font text-lg tracking-wider">{activePlot?.properties.HISTO_4 ?? 0}%</span>
+                    <span className="primary-font text-lg tracking-wider">{activePlot?.properties.rock_pct ?? 0}%</span>
                   </div>
                   <div className="flex flex-row items-center w-full justify-between">
                     <div className="flex flex-row items-center">
@@ -122,9 +125,7 @@ export default function PlotDetail({ plot, contracts, injectedProvider, mainnetP
                         Vegeration
                       </span>
                     </div>
-                    <span className="primary-font text-lg tracking-wider">
-                      {activePlot?.properties.HISTO_255 ?? 0}%
-                    </span>
+                    <span className="primary-font text-lg tracking-wider">{activePlot?.properties.veg_pct ?? 0}%</span>
                   </div>
                 </div>
               </div>
@@ -137,8 +138,10 @@ export default function PlotDetail({ plot, contracts, injectedProvider, mainnetP
               transition={{ delay: 0.4 }}
             >
               <div className="flex flex-col justify-between py-3.5 mt-3">
-                <span className="text-left primary-font tracking-wider mb-2">POINTS OF INTEREST</span>
-                <span className="text-left secondary-font text-white text-opacity-75 tracking-wider">N/A</span>
+                <span className="text-left primary-font tracking-wider mb-2">FEATURE</span>
+                <span className="text-left secondary-font text-white text-opacity-75 tracking-wider">
+                  {activePlot?.properties.feature}
+                </span>
               </div>
             </motion.div>
             <motion.div
@@ -150,22 +153,26 @@ export default function PlotDetail({ plot, contracts, injectedProvider, mainnetP
             >
               <div className="flex flex-col justify-between py-3.5 mt-3">
                 <span className="text-left primary-font tracking-wider mb-2">Owner</span>
-                <Tooltip title={addressFinal}>
-                  <Link
-                    to={{
-                      pathname: `https://etherscan.io/address/${
-                        nftMetaData && nftMetaData.owner && nftMetaData.owner.address
-                      }`,
-                    }}
-                    target={"_blank"}
-                    className="logo-link w-full mb-2.5"
-                  >
-                    <div className="flex items-center justify-between">
-                      <Address address={addressFinal} ensProvider={mainnetProvider} />{" "}
-                      <img className="ml-4 h-auto bg-transparent " src={Arrow} alt="arrow" />
-                    </div>
-                  </Link>
-                </Tooltip>
+                {addressFinal === "N/A" ? (
+                  <div className="flex items-center justify-between">N/A</div>
+                ) : (
+                  <Tooltip title={addressFinal}>
+                    <Link
+                      to={{
+                        pathname: `https://etherscan.io/address/${
+                          nftMetaData && nftMetaData.owner && nftMetaData.owner.address
+                        }`,
+                      }}
+                      target={"_blank"}
+                      className="logo-link w-full mb-2.5"
+                    >
+                      <div className="flex items-center justify-between">
+                        <Address address={addressFinal} ensProvider={mainnetProvider} />{" "}
+                        <img className="ml-4 h-auto bg-transparent " src={Arrow} alt="arrow" />
+                      </div>
+                    </Link>
+                  </Tooltip>
+                )}
               </div>
             </motion.div>
             <motion.div

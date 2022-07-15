@@ -1,10 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
-import { setActivePlotNftData } from "../actions/plotsSlice";
-import { PARCEL_0_OPENSEA_ID } from "../constants";
-import { useAppDispatch } from "./";
+import { PARCEL_0_OPENSEA_ID, LAST_ALLOCATED_PLOT_ID } from "../constants";
 
 export const useGetNftMetadata = (activeAssetId: number | undefined) => {
-  const dispatch = useAppDispatch();
   const [prevCalledId, setPrevCalledId] = useState(0);
   const [nftMetaData, setNftMetaData] = useState<any>();
   const shouldFetch = activeAssetId !== prevCalledId;
@@ -15,17 +12,26 @@ export const useGetNftMetadata = (activeAssetId: number | undefined) => {
   }, [activeAssetId]);
 
   const fetchBalance = useCallback(async () => {
-    const options = { method: "GET", headers: { "X-API-KEY": process.env.REACT_APP_OPENSEA_TOKEN ?? "" } };
+    const options = { method: "GET" };
 
-    if (activeAssetId !== undefined) {
+    if (activeAssetId !== undefined && activeAssetId <= LAST_ALLOCATED_PLOT_ID) {
       shouldFetch &&
         fetch(
-          `https://api.opensea.io/api/v1/asset/${PARCEL_0_OPENSEA_ID}/${activeAssetId.toString()}/?include_orders=false`,
+          `/api/v1/asset/${PARCEL_0_OPENSEA_ID}/${activeAssetId.toString()}/?include_orders=false`, // TODO trkaplan make this URI conditional for local testing
           options,
         )
           .then(response => response.json())
           .then(response => setNftMetaData(response))
-          .catch(err => console.error(err));
+          .catch(err => {
+            console.error(err);
+            setNftMetaData(null);
+          });
+    } else if (activeAssetId !== undefined && activeAssetId > LAST_ALLOCATED_PLOT_ID) {
+      setNftMetaData({
+        owner: {
+          address: "N/A"
+        }
+      })
     }
   }, [activeAssetId])
 
