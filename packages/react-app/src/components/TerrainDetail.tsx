@@ -72,9 +72,9 @@ export default function TerrainDeail() {
                     <div className="flex flex-row items-center w-full justify-between">
                         <div className="flex flex-row items-center">
                             <div className="mr-6 w-5">
-                                <img className="bg-transparent" src={Sage} alt="Vegeration" />
+                                <img className="bg-transparent" src={Sage} alt="Vegetation" />
                             </div>
-                            <span className="secondary-font text-xl">Vegeration</span>
+                            <span className="secondary-font text-xl">Vegetation</span>
                         </div>
                         <span className="primary-font text-lg">13%</span>
                     </div>
